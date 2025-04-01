@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.WodeDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.taanwei_id as taanweiId
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.WodeView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,taanwei.taanwei_name as taanweiName
+        ,taanwei.taanwei_types as taanweiTypes
+        ,taanwei.zhuangtai_types as zhuangtaiTypes
+        ,taanwei.quyu_types as quyuTypes
+        ,taanwei.taanwei_content as taanweiContent
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM wode  a
+        left JOIN taanwei taanwei ON a.taanwei_id = taanwei.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test="params.taanweiId != null">
+                and a.taanwei_id = #{params.taanweiId}
+            </if>
+
+            <if test=" params.taanweiName != '' and params.taanweiName != null and params.taanweiName != 'null' ">
+                and taanwei.taanwei_name like CONCAT('%',#{params.taanweiName},'%')
+            </if>
+            <if test="params.taanweiTypes != null">
+                and taanwei.taanwei_types = #{params.taanweiTypes}
+            </if>
+
+            <if test="params.zhuangtaiTypes != null">
+                and taanwei.zhuangtai_types = #{params.zhuangtaiTypes}
+            </if>
+
+            <if test="params.quyuTypes != null">
+                and taanwei.quyu_types = #{params.quyuTypes}
+            </if>
+
+            <if test=" params.taanweiContent != '' and params.taanweiContent != null and params.taanweiContent != 'null' ">
+                and taanwei.taanwei_content like CONCAT('%',#{params.taanweiContent},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
